@@ -12,8 +12,11 @@ import android.util.AttributeSet;
 
 import com.hencoder.hencoderpracticedraw5.R;
 
+import java.util.Calendar;
+
 public class Practice01AfterOnDrawView extends AppCompatImageView {
     Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private float progress;
 
     public Practice01AfterOnDrawView(Context context) {
         super(context);
@@ -32,6 +35,15 @@ public class Practice01AfterOnDrawView extends AppCompatImageView {
         paint.setTextSize(28);
     }
 
+    public float getProgress() {
+        return progress;
+    }
+
+    public void setProgress(float progress) {
+        this.progress = progress;
+        invalidate();
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -46,7 +58,24 @@ public class Practice01AfterOnDrawView extends AppCompatImageView {
             canvas.concat(getImageMatrix());
             Rect bounds = drawable.getBounds();
             canvas.drawText(getResources().getString(R.string.image_size, bounds.width(), bounds.height()), 20, 40, paint);
+            paint.setColor(Color.parseColor("#A0E91E63"));
+            canvas.drawCircle(50, 50, 34, paint);
+
+            paint.setColor(Color.parseColor("#A0E91E63"));
+            canvas.drawCircle(200, 200, 55, paint);
             canvas.restore();
         }
+
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        int second = calendar.get(Calendar.SECOND);
+        int pointX = getWidth() / 2;
+        int pointY = getHeight() / 2;
+        canvas.save();
+        canvas.translate(pointX, pointY);
+        canvas.rotate(6 * progress);
+        canvas.drawLine(0, -230, 0, 0, paint);
+        canvas.restore();
     }
 }

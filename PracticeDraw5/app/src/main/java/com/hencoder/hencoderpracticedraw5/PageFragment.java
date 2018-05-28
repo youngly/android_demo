@@ -1,13 +1,20 @@
 package com.hencoder.hencoderpracticedraw5;
 
+import android.animation.ObjectAnimator;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
+import android.view.animation.LinearInterpolator;
+
+import com.hencoder.hencoderpracticedraw5.practice.Practice01AfterOnDrawView;
+
+import static android.animation.ValueAnimator.RESTART;
 
 public class PageFragment extends Fragment {
     @LayoutRes int sampleLayoutRes;
@@ -34,6 +41,13 @@ public class PageFragment extends Fragment {
         ViewStub practiceStub = (ViewStub) view.findViewById(R.id.practiceStub);
         practiceStub.setLayoutResource(practiceLayoutRes);
         practiceStub.inflate();
+
+        if (practiceLayoutRes == R.layout.practice_after_on_draw) {
+            Practice01AfterOnDrawView animationView = (Practice01AfterOnDrawView) view.findViewById(R.id.one);
+            ObjectAnimator animator = ObjectAnimator.ofFloat(animationView, "progress", 0, 60);
+            animator.setInterpolator(new LinearInterpolator());
+            animator.start();
+        }
 
         return view;
     }

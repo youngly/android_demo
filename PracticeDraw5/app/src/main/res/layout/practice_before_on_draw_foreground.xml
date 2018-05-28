@@ -6,7 +6,7 @@
     <com.hencoder.hencoderpracticedraw5.practice.Practice06BeforeOnDrawForegroundView
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:foreground="#88000000"
+        android:foreground="#33000000"
         android:scaleType="centerCrop"
         android:src="@drawable/batman" />
 

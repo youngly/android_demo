@@ -36,9 +36,17 @@ public class Practice05AfterOnDrawForegroundView extends AppCompatImageView {
         canvas.save();
         canvas.rotate(-45);
         paint.setColor(Color.parseColor("#f44336"));
-        canvas.drawRect(-120, 40, 200, 120, paint);
+        canvas.drawRect(-120, 40, 120, 120, paint);
         paint.setColor(Color.WHITE);
         canvas.drawText("New", -55, 100, paint);
+        canvas.restore();
+
+        int dx = getWidth();
+        int dy = getHeight();
+        canvas.save();
+        canvas.translate(dx, dy);
+        canvas.rotate(-135);
+        canvas.drawRect(10, -100, 60, 100, paint);
         canvas.restore();
     }
 }
