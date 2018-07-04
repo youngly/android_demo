@@ -30,6 +30,7 @@ import android.service.autofill.SaveRequest;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArrayMap;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.autofill.AutofillId;
@@ -70,7 +71,7 @@ public class BasicService extends AutofillService {
         Map<String, AutofillId> fields = getAutofillableFields(structure);
         Log.d(TAG, "autofillable fields:" + fields);
 
-        if (fields.isEmpty()) {
+        if (fields.isEmpty() || fields.size() <= 1) {
             toast("No autofill hints found");
             callback.onSuccess(null);
             return;
@@ -112,7 +113,7 @@ public class BasicService extends AutofillService {
     @Override
     public void onSaveRequest(SaveRequest request, SaveCallback callback) {
         Log.d(TAG, "onSaveRequest()");
-        toast("Save not supported");
+//        toast("Save not supported");
 
         List<FillContext> context = request.getFillContexts();
         AssistStructure structure = context.get(context.size() - 1).getStructure();
@@ -143,6 +144,14 @@ public class BasicService extends AutofillService {
             // Or use your own heuristics to describe the contents of a view
             // using methods such as getText() or getHint().
 //            Log.d(TAG, "text = " + viewNode.getText());
+            if (viewNode.getInputType() == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
+                    viewNode.getInputType() == 129) {
+                Log.v(TAG, "password = " + viewNode.getText());
+                toast("password = " + viewNode.getText());
+            } else if (viewNode.getInputType() != 0) {
+                Log.v(TAG, "username = " + viewNode.getText());
+                toast("username = " + viewNode.getText());
+            }
         }
 
         for (int i = 0; i < viewNode.getChildCount(); i++) {
@@ -175,6 +184,9 @@ public class BasicService extends AutofillService {
     private void addAutofillableFields(@NonNull Map<String, AutofillId> fields,
                                        @NonNull ViewNode node) {
         int type = node.getAutofillType();
+        Log.v(TAG, "idType = " + node.getIdType() + ", inputtype = " + node.getInputType() +
+                ", autofilltype = " + type);
+
         // We're simple, we just autofill text fields.
         if (type == View.AUTOFILL_TYPE_TEXT) {
             String hint = getHint(node);
@@ -187,8 +199,25 @@ public class BasicService extends AutofillService {
                     Log.v(TAG, "Ignoring hint " + hint + " on " + id
                             + " because it was already set");
                 }
+            } else {
+                if (node.getInputType() == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
+                        node.getInputType() == 129) {
+                    Log.v(TAG, "nodeType = " + node.getInputType());
+                    fields.put("password", node.getAutofillId());
+                } else if (node.getInputType() != 0) {
+                    fields.put("username", node.getAutofillId());
+                }
+            }
+        } else {
+            if (node.getInputType() == InputType.TYPE_TEXT_VARIATION_PASSWORD ||
+                    node.getInputType() == 129) {
+                Log.v(TAG, "nodeType = " + node.getInputType());
+                fields.put("password", node.getAutofillId());
+            } else if (node.getInputType() != 0) {
+                fields.put("username", node.getAutofillId());
             }
         }
+
         int childrenSize = node.getChildCount();
         for (int i = 0; i < childrenSize; i++) {
             addAutofillableFields(fields, node.getChildAt(i));
